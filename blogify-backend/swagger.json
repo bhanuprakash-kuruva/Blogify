@@ -1,0 +1,187 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "Blogify API",
+    "version": "1.0.0",
+    "description": "Centralized API documentation for Blogify MERN Stack App"
+  },
+  "servers": [
+    { "url": "http://localhost:5000/api" }
+  ],
+  "tags": [
+    { "name": "Posts", "description": "Blog post management" },
+    { "name": "Categories", "description": "Category management" },
+    { "name": "Comments", "description": "Comment management" },
+    { "name": "Admin", "description": "Admin dashboard stats" }
+  ],
+  "paths": {
+    "/posts": {
+      "get": {
+        "summary": "Get all posts",
+        "tags": ["Posts"],
+        "parameters": [
+          { "name": "search", "in": "query", "schema": { "type": "string" } },
+          { "name": "category", "in": "query", "schema": { "type": "string" } },
+          { "name": "page", "in": "query", "schema": { "type": "integer" } },
+          { "name": "limit", "in": "query", "schema": { "type": "integer" } }
+        ],
+        "responses": { "200": { "description": "List of posts" } }
+      },
+      "post": {
+        "summary": "Create a new post",
+        "tags": ["Posts"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "title": { "type": "string" },
+                  "content": { "type": "string" },
+                  "category": { "type": "string" },
+                  "tags": { "type": "string" },
+                  "status": { "type": "string" },
+                  "image": { "type": "string", "format": "binary" }
+                },
+                "required": ["title", "content", "category"]
+              }
+            }
+          }
+        },
+        "responses": { "201": { "description": "Post created" } }
+      }
+    },
+    "/posts/{id}": {
+      "get": {
+        "summary": "Get post by ID",
+        "tags": ["Posts"],
+        "parameters": [
+          { "in": "path", "name": "id", "required": true, "schema": { "type": "string" } }
+        ],
+        "responses": { "200": { "description": "Post details" }, "404": { "description": "Post not found" } }
+      },
+      "put": {
+        "summary": "Update a post",
+        "tags": ["Posts"],
+        "parameters": [
+          { "in": "path", "name": "id", "required": true, "schema": { "type": "string" } }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "title": { "type": "string" },
+                  "content": { "type": "string" },
+                  "category": { "type": "string" },
+                  "tags": { "type": "string" },
+                  "status": { "type": "string" },
+                  "image": { "type": "string", "format": "binary" }
+                }
+              }
+            }
+          }
+        },
+        "responses": { "200": { "description": "Post updated" }, "404": { "description": "Post not found" } }
+      },
+      "delete": {
+        "summary": "Delete a post",
+        "tags": ["Posts"],
+        "parameters": [
+          { "in": "path", "name": "id", "required": true, "schema": { "type": "string" } }
+        ],
+        "responses": { "200": { "description": "Post deleted" }, "404": { "description": "Post not found" } }
+      }
+    },
+    "/posts/{id}/like": {
+      "post": {
+        "summary": "Like a post",
+        "tags": ["Posts"],
+        "parameters": [{ "in": "path", "name": "id", "required": true, "schema": { "type": "string" } }],
+        "responses": { "200": { "description": "Likes updated" }, "404": { "description": "Post not found" } }
+      }
+    },
+    "/posts/{id}/dislike": {
+      "post": {
+        "summary": "Dislike a post",
+        "tags": ["Posts"],
+        "parameters": [{ "in": "path", "name": "id", "required": true, "schema": { "type": "string" } }],
+        "responses": { "200": { "description": "Dislikes updated" }, "404": { "description": "Post not found" } }
+      }
+    },
+    "/categories": {
+      "get": { "summary": "Get all categories", "tags": ["Categories"], "responses": { "200": { "description": "List of categories" } } },
+      "post": {
+        "summary": "Create category",
+        "tags": ["Categories"],
+        "requestBody": { "required": true, "content": { "application/json": { "schema": { "type": "object", "properties": { "name": { "type": "string" } }, "required": ["name"] } } } },
+        "responses": { "201": { "description": "Category created" } }
+      }
+    },
+    "/categories/{id}": {
+      "put": {
+        "summary": "Update category",
+        "tags": ["Categories"],
+        "parameters": [{ "in": "path", "name": "id", "required": true, "schema": { "type": "string" } }],
+        "requestBody": { "required": true, "content": { "application/json": { "schema": { "type": "object", "properties": { "name": { "type": "string" } } } } } },
+        "responses": { "200": { "description": "Category updated" }, "404": { "description": "Category not found" } }
+      },
+      "delete": {
+        "summary": "Delete category",
+        "tags": ["Categories"],
+        "parameters": [{ "in": "path", "name": "id", "required": true, "schema": { "type": "string" } }],
+        "responses": { "200": { "description": "Category deleted" }, "404": { "description": "Category not found" } }
+      }
+    },
+    "/comments": {
+      "post": {
+        "summary": "Add comment to post",
+        "tags": ["Comments"],
+        "requestBody": { "required": true, "content": { "application/json": { "schema": { "type": "object", "properties": { "postId": { "type": "string" }, "content": { "type": "string" } }, "required": ["postId", "content"] } } } },
+        "responses": { "201": { "description": "Comment added" } }
+      }
+    },
+    "/comments/{postId}": {
+      "get": {
+        "summary": "Get comments by post",
+        "tags": ["Comments"],
+        "parameters": [{ "in": "path", "name": "postId", "required": true, "schema": { "type": "string" } }],
+        "responses": { "200": { "description": "List of comments" } }
+      }
+    },
+    "/comments/{id}": {
+      "delete": {
+        "summary": "Delete comment",
+        "tags": ["Comments"],
+        "parameters": [{ "in": "path", "name": "id", "required": true, "schema": { "type": "string" } }],
+        "responses": { "200": { "description": "Comment deleted" }, "404": { "description": "Comment not found" } }
+      }
+    },
+    "/comments/{id}/like": {
+      "post": {
+        "summary": "Like comment",
+        "tags": ["Comments"],
+        "parameters": [{ "in": "path", "name": "id", "required": true, "schema": { "type": "string" } }],
+        "responses": { "200": { "description": "Likes updated" }, "404": { "description": "Comment not found" } }
+      }
+    },
+    "/comments/{id}/dislike": {
+      "post": {
+        "summary": "Dislike comment",
+        "tags": ["Comments"],
+        "parameters": [{ "in": "path", "name": "id", "required": true, "schema": { "type": "string" } }],
+        "responses": { "200": { "description": "Dislikes updated" }, "404": { "description": "Comment not found" } }
+      }
+    },
+    "/admin/stats": {
+      "get": {
+        "summary": "Get admin dashboard stats",
+        "tags": ["Admin"],
+        "responses": { "200": { "description": "Admin stats" } }
+      }
+    }
+  }
+}
